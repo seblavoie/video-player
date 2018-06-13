@@ -67,7 +67,6 @@ export default {
   mounted () {
     var _this = this
     this.requestGenerateFileTreeObject(this.source).then(function() {
-      console.log(_this.files)
       _this.setSpeed(_this.speed);
     })
   },
