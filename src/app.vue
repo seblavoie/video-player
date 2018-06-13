@@ -29,9 +29,10 @@
             <video controls :src="currentFile.path" @click="toggle"></video>
           </div>
           <hr>
-          <form action="#" class="form-inline" v-on:submit.prevent="onSubmit">
+          <form action="#" class="form-inline justify-content-end" v-on:submit.prevent="onSubmit">
+            Playback speed: 
             <select class="form-control ml-2" v-model="speed">
-              <option :value="option" v-for="option in [1, 1.25, 1.5, 1.75, 2, 2.5, 3]">{{ option }}</option>
+              <option :value="option" v-for="option in [1, 1.25, 1.5, 1.75, 2, 2.5, 3]">{{ option }}x</option>
             </select>
           </form>
         </div>
