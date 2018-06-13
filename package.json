@@ -1,6 +1,6 @@
 {
-  "name": "my-new-project",
-  "productName": "my-new-project",
+  "name": "media-player",
+  "productName": "media-player",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": "src/index.js",
