@@ -4,16 +4,17 @@
     <meta charset="utf-8">
     <title></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <div id="test"></div>
+    <div id="app"></div>
   </body>
 
   <script>
   import Vue from 'vue';
-  import Test from './test';
+  import Test from './app';
 
-  const app = new Vue(Test).$mount('#test');
+  const app = new Vue(Test).$mount('#app');
 
   app.text = "Electron Forge with Vue.js!";
   </script>

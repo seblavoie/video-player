@@ -1,24 +1,28 @@
 <template>
-  <div class="container">
+  <div class="container-fluid">
     <h3>Video player</h3>
     <form action="#" class="form-inline" v-on:submit.prevent="onSubmit">
       <!-- <div class="form-group"> -->
-        <input type="text" v-model="source" class="form-control" style="width: 50%">
-        <button class="btn btn-outline-primary ml-2" @click="requestGenerateFileTreeObject(source)">Refresh</button>
-        <select class="form-control ml-2" v-model="speed">
-          <option value="1">1</option>
-          <option value="1.25">1.25</option>
-          <option value="1.5">1.5</option>
-          <option value="1.75">1.75</option>
-          <option value="2">2</option>
-          <option value="2.5">2.5</option>
-          <option value="3">3</option>
-        </select>
-      <!-- </div> -->
+      <input type="text" v-model="source" class="form-control" style="width: 85%">
+      <button class="btn btn-outline-primary ml-2" @click="requestGenerateFileTreeObject(source)">Refresh</button>
     </form>
+    <form action="#" class="form-inline" v-on:submit.prevent="onSubmit">
+      <select class="form-control ml-2" v-model="speed">
+        <option value="1">1</option>
+        <option value="1.25">1.25</option>
+        <option value="1.5">1.5</option>
+        <option value="1.75">1.75</option>
+        <option value="2">2</option>
+        <option value="2.5">2.5</option>
+        <option value="3">3</option>
+      </select>
+    </form>
+    <div class="embed-responsive embed-responsive-16by9">
+      <video controls :src="currentPath"></video>
+    </div>
     <ul>
       <li v-for="(file, index) in files" v-if="file.isValid()">
-        <file-component :file="file" :index="index"></file-component>
+        <file-component :file="file" :index="index" :play="play"></file-component>
       </li>
     </ul>
   </div>
@@ -36,8 +40,10 @@ export default {
     return {
       text: '',
       files: [],
-      source: '/Users/sebastienlavoie/Desktop',
-      speed: 3
+      source: '/Users/sebastienlavoie/Dropbox/All/04_Resources/Documentation/Tutorials/Photoshop/LearnSquared - Narrative Concept Art/1. Design Principles',
+      speed: 3,
+      currentlyOpened: 0,
+      currentPath: ""
     }
   },
 
@@ -56,11 +62,12 @@ export default {
   },
 
   methods:  {
+    play: function(file) {
+      this.currentPath = file.path
+    },
+
     setSpeed: function(speed) {
-      var videos = document.getElementsByTagName("video");
-      for(var i = 0; i < videos.length; i++){
-        videos[i].playbackRate = speed
-      }
+      var videos = document.getElementsByTagName("video")[0].playbackRate = speed;
     },
 
     requestGenerateFileTreeObject: function(directoryString) {
@@ -115,8 +122,5 @@ class File {
 
     return false;
   }
-
-
-
 }
 </script>
