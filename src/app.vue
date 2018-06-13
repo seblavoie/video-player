@@ -26,7 +26,7 @@
         <div v-if="currentFile">
           <h3 class="mb-3">{{ currentFile.name }}</h3>
           <div class="embed-responsive embed-responsive-16by9">
-            <video controls :src="currentFile.path"></video>
+            <video controls :src="currentFile.path" @click="toggle"></video>
           </div>
           <hr>
           <form action="#" class="form-inline" v-on:submit.prevent="onSubmit">
@@ -51,7 +51,6 @@ const settings = require('electron-settings');
 
 
 export default {
-  name: 'test',
   data () {
     return {
       files: [],
@@ -104,6 +103,15 @@ export default {
         this.setupVideo()
         this.setNextFile()
       });
+    },
+
+    toggle: function() {
+      var video = document.getElementsByTagName("video")[0]
+      if(video.paused) {
+        video.play()
+      } else {
+        video.pause()
+      }
     },
 
     setupVideo: function() {
