@@ -9,7 +9,7 @@ This project has been duck-taped together in an evening and has only been tested
 Clone the repo and run: 
 
 ```
-npm install -g electron-forge start
+npm install -g electron-forge
 npm install
 electron-forge start
 ```
