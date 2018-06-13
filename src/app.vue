@@ -57,15 +57,27 @@ export default {
       files: [],
       source: settings.get('source') || '~/Desktop',
       speed: settings.get('speed') || 3,
-      currentFile: settings.get('currentFile') || null
+      currentFile: settings.get('currentFile') || {},
+      currentIndex: settings.get('currentIndex') || {},
     }
   },
 
-  beforeMount () {
-    this.requestGenerateFileTreeObject(this.source)
+  created () {
+  },
+
+  mounted () {
+    var _this = this
+    this.requestGenerateFileTreeObject(this.source).then(function() {
+      console.log(_this.files)
+      _this.setSpeed(_this.speed);
+    })
   },
 
   watch: {
+    currentFile: function() {
+      this.setNextFile();
+    },
+
     speed: function() {
       this.setSpeed(this.speed)
       settings.set("speed", this.speed)
@@ -79,22 +91,45 @@ export default {
   methods:  {
     onSubmit: function() {},
 
-    play: function(file) {
-      this.currentFile = file
-      settings.set("currentFile", file)
+    setNextFile: function() {
+      this.nextFile = this.files[this.currentIndex + 1]
+    },
+
+    play: function(index) {
+      this.currentFile = this.files[index]
+      settings.set("currentFile", this.currentFile)
+      this.currentIndex = index
+      settings.set("currentIndex", index)
       this.$nextTick(function() {
-        this.setSpeed(this.speed)
+        this.setupVideo()
+        this.setNextFile()
       });
     },
 
+    setupVideo: function() {
+      var _this = this
+      var video = document.getElementsByTagName("video")[0]
+      if(video) {
+        video.playbackRate = this.speed;
+      }
+      video.onended = function(e) {
+        _this.play(_this.currentIndex + 1)
+      }
+      video.play();
+    },
+
     setSpeed: function(speed) {
-      var videos = document.getElementsByTagName("video")[0].playbackRate = speed;
+      var video = document.getElementsByTagName("video")[0]
+      settings.set("speed", speed)
+      if(video) {
+        video.playbackRate = speed;
+      }
     },
 
     requestGenerateFileTreeObject: function(directoryString) {
       settings.set('source', directoryString);
       this.files = [];
-      this.generateFileTreeObject(directoryString);
+      return this.generateFileTreeObject(directoryString);
     },
 
     generateFileTreeObject: function(directoryString) {
