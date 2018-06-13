@@ -17,7 +17,7 @@
       <div class="sidebar flex-column flex-shrink-1">
         <h3>Video player</h3>
         <ul class="nav">
-          <li class="nav-item" :class="{ active: file == currentFile }" v-for="(file, index) in files" v-if="file.isValid()">
+          <li class="nav-item" :class="{ active: file.name == currentFile.name }" v-for="(file, index) in files" v-if="file.isValid()">
             <file-component classes="nav-link" :file="file" :index="index" :play="play"></file-component>
           </li>
         </ul>
@@ -34,7 +34,6 @@
               <option :value="option" v-for="option in [1, 1.25, 1.5, 1.75, 2, 2.5, 3]">{{ option }}</option>
             </select>
           </form>
-
         </div>
         <div v-else>
           <h3 class="mb-3">Select a video to start</h3>
@@ -48,35 +47,41 @@
 // const fs = require('fs');
 var Promise = require("bluebird");
 var fs = Promise.promisifyAll(require("fs")); //This is most convenient way if it works for you
+const settings = require('electron-settings');
 
 
 export default {
   name: 'test',
   data () {
     return {
-      text: '',
       files: [],
-      source: '/Users/sebastienlavoie/Dropbox/All/04_Resources/Documentation/Tutorials/Photoshop/LearnSquared - Narrative Concept Art/1. Design Principles',
-      speed: 3,
-      currentlyOpened: 0,
-      currentFile: null
+      source: settings.get('source') || '~/Desktop',
+      speed: settings.get('speed') || 3,
+      currentFile: settings.get('currentFile') || null
     }
   },
 
   beforeMount () {
     this.requestGenerateFileTreeObject(this.source)
-    this.currentFile = this.files[0]
-    console.log(this.currentFile)
   },
 
+  watch: {
+    speed: function() {
+      this.setSpeed(this.speed)
+      settings.set("speed", this.speed)
+    }
+  },
 
   components: {
     FileComponent: require("./file.vue")
   },
 
   methods:  {
+    onSubmit: function() {},
+
     play: function(file) {
       this.currentFile = file
+      settings.set("currentFile", file)
       this.$nextTick(function() {
         this.setSpeed(this.speed)
       });
@@ -87,6 +92,7 @@ export default {
     },
 
     requestGenerateFileTreeObject: function(directoryString) {
+      settings.set('source', directoryString);
       this.files = [];
       this.generateFileTreeObject(directoryString);
     },

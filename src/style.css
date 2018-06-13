@@ -2,9 +2,9 @@ html {
   -webkit-font-smoothing: antialiased
 }
 
-html, body, .wrapper, .d-flex {
+/*html, body, .wrapper, .d-flex {
   height: 100%
-}
+}*/
 
 body {
   background-color: #222;
