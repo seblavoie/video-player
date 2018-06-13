@@ -1,7 +1,5 @@
 <template>
-  <div :id="index">
-    <a href="#" @click="play(file)">{{ file.name }}</a>
-  </div>
+    <a href="#" :class="classes" @click="play(file)">{{ file.name }}</a>
 </template>
 
 <script>
@@ -10,7 +8,7 @@ export default {
 
   props: [
     "file",
-    "index",
+    "classes",
     "play"
   ]
 }

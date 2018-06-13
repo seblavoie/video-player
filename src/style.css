@@ -1,3 +1,63 @@
-body {
-  background-color: #323232;
+html {
+  -webkit-font-smoothing: antialiased
 }
+
+html, body, .wrapper, .d-flex {
+  height: 100%
+}
+
+body {
+  background-color: #222;
+  color: #bbb;
+}
+
+.sidebar {
+  background-color: #262626;
+  border-right: .5px solid #505050;
+}
+
+.sidebar .nav {
+  display: block;
+  padding: 10px;
+  font-size: .9em;
+  white-space: nowrap;
+}
+
+.sidebar .nav a {
+  color: #999;
+}
+
+.sidebar .nav a:hover {
+  color: #eee;
+}
+
+.sidebar .nav .nav-item.active a {
+  font-weight: bold;
+  color: #eee;
+}
+
+.sidebar h3 {
+  border-bottom: 1px solid #444;
+  padding: 15px;
+}
+
+.header {
+  background-color: #161616
+}
+
+.content {
+  width: 100%;
+  padding: 50px;
+}
+
+/*.sidebar {
+  min-width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 999;
+  background: #7386D5;
+  color: #fff !important;
+  transition: all 0.3s;
+}*/

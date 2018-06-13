@@ -1,30 +1,46 @@
 <template>
-  <div class="container-fluid">
-    <h3>Video player</h3>
-    <form action="#" class="form-inline" v-on:submit.prevent="onSubmit">
-      <!-- <div class="form-group"> -->
-      <input type="text" v-model="source" class="form-control" style="width: 85%">
-      <button class="btn btn-outline-primary ml-2" @click="requestGenerateFileTreeObject(source)">Refresh</button>
-    </form>
-    <form action="#" class="form-inline" v-on:submit.prevent="onSubmit">
-      <select class="form-control ml-2" v-model="speed">
-        <option value="1">1</option>
-        <option value="1.25">1.25</option>
-        <option value="1.5">1.5</option>
-        <option value="1.75">1.75</option>
-        <option value="2">2</option>
-        <option value="2.5">2.5</option>
-        <option value="3">3</option>
-      </select>
-    </form>
-    <div class="embed-responsive embed-responsive-16by9">
-      <video controls :src="currentPath"></video>
+  <div class="wrapper">
+    <div class="header">
+      <form action="#" v-on:submit.prevent="onSubmit">
+        <div class="d-flex">
+          <div class="p-2 w-100">
+            <input type="text" v-model="source" class="form-control">
+          </div>
+          <div class="p-2 flex-shrink-1">
+            <button class="btn btn-outline-primary ml-2" @click="requestGenerateFileTreeObject(source)">Refresh</button>
+          </div>
+        </div>
+      </form>
     </div>
-    <ul>
-      <li v-for="(file, index) in files" v-if="file.isValid()">
-        <file-component :file="file" :index="index" :play="play"></file-component>
-      </li>
-    </ul>
+
+    <div class="d-flex flex-row align-items-stretch">
+      <div class="sidebar flex-column flex-shrink-1">
+        <h3>Video player</h3>
+        <ul class="nav">
+          <li class="nav-item" :class="{ active: file == currentFile }" v-for="(file, index) in files" v-if="file.isValid()">
+            <file-component classes="nav-link" :file="file" :index="index" :play="play"></file-component>
+          </li>
+        </ul>
+      </div>
+      <div class="content flex-column flex-fill">
+        <div v-if="currentFile">
+          <h3 class="mb-3">{{ currentFile.name }}</h3>
+          <div class="embed-responsive embed-responsive-16by9">
+            <video controls :src="currentFile.path"></video>
+          </div>
+          <hr>
+          <form action="#" class="form-inline" v-on:submit.prevent="onSubmit">
+            <select class="form-control ml-2" v-model="speed">
+              <option :value="option" v-for="option in [1, 1.25, 1.5, 1.75, 2, 2.5, 3]">{{ option }}</option>
+            </select>
+          </form>
+
+        </div>
+        <div v-else>
+          <h3 class="mb-3">Select a video to start</h3>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -43,19 +59,16 @@ export default {
       source: '/Users/sebastienlavoie/Dropbox/All/04_Resources/Documentation/Tutorials/Photoshop/LearnSquared - Narrative Concept Art/1. Design Principles',
       speed: 3,
       currentlyOpened: 0,
-      currentPath: ""
+      currentFile: null
     }
   },
 
-  watch: {
-    speed: function() {
-      this.setSpeed(this.speed)
-    }
-  },
-
-  mounted () {
+  beforeMount () {
     this.requestGenerateFileTreeObject(this.source)
+    this.currentFile = this.files[0]
+    console.log(this.currentFile)
   },
+
 
   components: {
     FileComponent: require("./file.vue")
@@ -63,7 +76,10 @@ export default {
 
   methods:  {
     play: function(file) {
-      this.currentPath = file.path
+      this.currentFile = file
+      this.$nextTick(function() {
+        this.setSpeed(this.speed)
+      });
     },
 
     setSpeed: function(speed) {
