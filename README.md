@@ -20,4 +20,4 @@ electron-forge start
 
 # Warning
 
-This project has been duck-taped together in an evening and has only been tested on my macOS computer, so use very carefully. I am open to contributions if you want to make this thing better.
+This project has been duck-taped together in an evening and has only been tested on my macOS computer, so use very carefully. I am open to contributions if you want to help make this thing better.
