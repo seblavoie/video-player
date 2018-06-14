@@ -31,7 +31,7 @@
           <hr>
           <form action="#" class="form-inline" v-on:submit.prevent="onSubmit">
             <select class="form-control ml-2" v-model="speed">
-              <option :value="option" v-for="option in [1, 1.25, 1.5, 1.75, 2, 2.5, 3]">{{ option }}</option>
+              <option :value="option" v-for="option in [1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4, 5]">{{ option }}</option>
             </select>
           </form>
         </div>
