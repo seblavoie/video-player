@@ -18,7 +18,7 @@
         <h3>Video player</h3>
         <ul class="nav">
           <template v-for="(file, index) in files">
-            <a v-if="file.prefix" href="#">{{ file.prefix }}</a>
+            <a v-if="file.prefix" @click="requestGenerateFileTreeObject(source + '/' + file.prefix)">{{ file.prefix }}</a>
             <li class="nav-item" :class="{ active: file.path == currentFile.path, prefixed: prefixed }" v-if="file.isValid()">
               <file-component classes="nav-link" :file="file" :index="index" :play="play"></file-component>
             </li>
@@ -152,6 +152,7 @@ export default {
       var _this = this
       this.files = []
       this.prefixed = false
+      this.source = directoryString
       settings.set('source', directoryString);
       this.generateFileTreeObject(directoryString).then(function() {
         _this.setSpeed(_this.speed)
