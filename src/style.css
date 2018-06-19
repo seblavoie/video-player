@@ -19,8 +19,21 @@ body {
   white-space: nowrap;
 }
 
+
+.sidebar .nav li.prefixed {
+  border-left: 2px solid #333
+}
+
 .sidebar .nav a {
   color: #999;
+}
+
+.sidebar .nav > a {
+  padding: 20px 20px 20px 0;
+  display: block;
+  font-weight: bold;
+  text-transform: uppercase;
+  opacity: .5
 }
 
 .sidebar .nav a:hover {

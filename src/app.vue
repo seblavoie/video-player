@@ -17,31 +17,34 @@
       <div class="sidebar flex-column flex-shrink-1">
         <h3>Video player</h3>
         <ul class="nav">
-          <li class="nav-item" :class="{ active: file.name == currentFile.name }" v-for="(file, index) in files" v-if="file.isValid()">
-            <file-component classes="nav-link" :file="file" :index="index" :play="play"></file-component>
-          </li>
-        </ul>
+          <template v-for="(file, index) in files">
+            <a v-if="file.prefix" href="#">{{ file.prefix }}</a>
+            <li class="nav-item" :class="{ active: file.path == currentFile.path, prefixed: prefixed }" v-if="file.isValid()">
+              <file-component classes="nav-link" :file="file" :index="index" :play="play"></file-component>
+            </li>
+          </template>
+      </ul>
+    </div>
+    <div class="content flex-column flex-fill">
+      <div v-if="currentFile">
+        <h3 class="mb-3">{{ currentFile.name }}</h3>
+        <div class="embed-responsive embed-responsive-16by9">
+          <video controls :src="currentFile.path" @click="toggle"></video>
+        </div>
+        <hr>
+        <form action="#" class="form-inline justify-content-end" v-on:submit.prevent="onSubmit">
+          Playback speed:
+          <select class="form-control ml-2" v-model="speed">
+            <option :value="option" v-for="option in [1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4, 5]">{{ option }}</option>
+          </select>
+        </form>
       </div>
-      <div class="content flex-column flex-fill">
-        <div v-if="currentFile">
-          <h3 class="mb-3">{{ currentFile.name }}</h3>
-          <div class="embed-responsive embed-responsive-16by9">
-            <video controls :src="currentFile.path" @click="toggle"></video>
-          </div>
-          <hr>
-          <form action="#" class="form-inline justify-content-end" v-on:submit.prevent="onSubmit">
-            Playback speed:
-            <select class="form-control ml-2" v-model="speed">
-              <option :value="option" v-for="option in [1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4, 5]">{{ option }}</option>
-            </select>
-          </form>
-        </div>
-        <div v-else>
-          <h3 class="mb-3">Select a video to start</h3>
-        </div>
+      <div v-else>
+        <h3 class="mb-3">Select a video to start</h3>
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -59,6 +62,7 @@ export default {
       speed: settings.get('speed') || 3,
       currentFile: settings.get('currentFile') || {},
       currentIndex: settings.get('currentIndex') || {},
+      prefixed: false
     }
   },
 
@@ -67,7 +71,7 @@ export default {
 
   mounted () {
     var _this = this
-    this.requestGenerateFileTreeObject(this.source);
+    this.requestGenerateFileTreeObject(this.source, false);
     this.setupEventListeners();
   },
 
@@ -144,18 +148,20 @@ export default {
       }
     },
 
-    requestGenerateFileTreeObject: function(directoryString) {
+    requestGenerateFileTreeObject: function(directoryString, startAtFirst = true) {
       var _this = this
       this.files = []
+      this.prefixed = false
       settings.set('source', directoryString);
       this.generateFileTreeObject(directoryString).then(function() {
         _this.setSpeed(_this.speed)
-        _this.play(0)
-        console.log(_this.files)
+        if(startAtFirst) {
+          _this.play(0)
+        }
       })
     },
 
-    generateFileTreeObject: function(directoryString) {
+    generateFileTreeObject: function(directoryString, prefix = false) {
       var _this = this;
       return fs.readdirAsync(directoryString)
       .then(arrayOfFileNameStrings => {
@@ -164,12 +170,15 @@ export default {
           return fs.statAsync(fullPath)
           .then(fileData => {
             const file = {};
-            file.filePath = fullPath;
+            file.filePath = fullPath
+            file.prefix = prefix
+            prefix = false
             if(fileData.isFile()) {
               _this.files.push(new File(file))
             } else {
               // recurse
-              return _this.generateFileTreeObject(file.filePath)
+              _this.prefixed = true
+              return _this.generateFileTreeObject(file.filePath, fileNameString)
               .then(fileNamesSubArray => {
                 file.files = fileNamesSubArray;
               })
@@ -190,7 +199,7 @@ class File {
     this.path = file.filePath
     this.name = getFilenameFromPath(this.path)
     this.extension = this.name.split('.').pop()
-    this.isFile = true
+    this.prefix = file.prefix
   }
 
   isValid() {
