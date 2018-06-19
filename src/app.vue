@@ -67,9 +67,8 @@ export default {
 
   mounted () {
     var _this = this
-    this.requestGenerateFileTreeObject(this.source).then(function() {
-      _this.setSpeed(_this.speed);
-    })
+    this.requestGenerateFileTreeObject(this.source);
+    this.setupEventListeners();
   },
 
   watch: {
@@ -89,6 +88,17 @@ export default {
 
   methods:  {
     onSubmit: function() {},
+
+    setupEventListeners: function() {
+      document.ondragover = document.ondrop = (ev) => {
+        ev.preventDefault()
+      }
+
+      document.body.ondrop = (ev) => {
+        this.requestGenerateFileTreeObject(ev.dataTransfer.files[0].path)
+        ev.preventDefault()
+      }
+    },
 
     setNextFile: function() {
       this.nextFile = this.files[this.currentIndex + 1]
@@ -135,9 +145,14 @@ export default {
     },
 
     requestGenerateFileTreeObject: function(directoryString) {
+      var _this = this
+      this.files = []
       settings.set('source', directoryString);
-      this.files = [];
-      return this.generateFileTreeObject(directoryString);
+      this.generateFileTreeObject(directoryString).then(function() {
+        _this.setSpeed(_this.speed)
+        _this.play(0)
+        console.log(_this.files)
+      })
     },
 
     generateFileTreeObject: function(directoryString) {
@@ -162,7 +177,7 @@ export default {
             }
             /*End recursive condition*/
             return file;
-          });
+          })
         });
         return Promise.all(fileDataPromises);
       });
@@ -171,11 +186,11 @@ export default {
 }
 
 class File {
-
   constructor(file) {
     this.path = file.filePath
-    this.name = this.path.replace(app.source, "").replace(/^\//, "")
-    this.extension = this.name.split('.').pop();
+    this.name = getFilenameFromPath(this.path)
+    this.extension = this.name.split('.').pop()
+    this.isFile = true
   }
 
   isValid() {
@@ -184,8 +199,11 @@ class File {
     if(isNotHiddenFile && isVideoFile) {
       return true;
     }
-
     return false;
   }
+}
+
+function getFilenameFromPath(path) {
+  return path.replace(/^.*[\\\/]/, '')
 }
 </script>
