@@ -2,7 +2,7 @@
   "name": "video-player",
   "productName": "video-player",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Electron-based player that reads video files as a playlist",
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
