@@ -3,6 +3,9 @@
     <div class="header">
       <form action="#" v-on:submit.prevent="onSubmit">
         <div class="d-flex">
+          <div class="p-2 flex-shrink-1">
+            <button class="btn btn-link ml-2" @click="goUpFolder(source)">↑</button>
+          </div>
           <div class="p-2 w-100">
             <input type="text" v-model="source" class="form-control">
           </div>
@@ -66,9 +69,6 @@ export default {
     }
   },
 
-  created () {
-  },
-
   mounted () {
     var _this = this
     this.requestGenerateFileTreeObject(this.source, false);
@@ -106,6 +106,11 @@ export default {
 
     setNextFile: function() {
       this.nextFile = this.files[this.currentIndex + 1]
+    },
+
+    goUpFolder: function() {
+      var source = this.source.substr(0, this.source.lastIndexOf("/"));
+      this.requestGenerateFileTreeObject(source)
     },
 
     play: function(index) {
@@ -152,7 +157,7 @@ export default {
       var _this = this
       this.files = []
       this.prefixed = false
-      this.source = directoryString
+      this.source = directoryString.replace(/\/$/g, "")
       settings.set('source', directoryString);
       this.generateFileTreeObject(directoryString).then(function() {
         _this.setSpeed(_this.speed)
